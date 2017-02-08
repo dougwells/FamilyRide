@@ -18,7 +18,7 @@ class ViewController: UIViewController {
         
         let testObject = PFObject(className: "TestObject2")
         
-        testObject["foo"] = "bar2"
+        testObject["foo"] = "bar12"
         
         testObject.saveInBackground { (success, error) -> Void in
             
