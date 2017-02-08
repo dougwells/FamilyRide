@@ -11,37 +11,37 @@ import UIKit
 import Parse
 
 class ViewController: UIViewController {
+    
+    var signupMode = true
+    
+    @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var signupOrLoginButton: UIButton!
+    @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var changeSignupModeButton: UIButton!
+
+    @IBAction func changeSignupMode(_ sender: Any) {
+        if signupMode {
+            //Change layout to login
+            
+            signupOrLoginButton.setTitle("Log In", for: [])
+            messageLabel.text = "Don't have an account?"
+            changeSignupModeButton.setTitle("Sign Up", for: [])
+            
+        } else {
+            signupOrLoginButton.setTitle("Sign Up", for: [])
+            messageLabel.text = "Already have an account?"
+            changeSignupModeButton.setTitle("Log In", for: [])
+        }
+        signupMode = !signupMode
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        let testObject = PFObject(className: "TestObject2")
-        
-        testObject["foo"] = "bar12"
-        
-        testObject.saveInBackground { (success, error) -> Void in
-            
-            // added test for success 11th July 2016
-            
-            if success {
-                
-                print("Object has been saved.")
-                
-            } else {
-                
-                if error != nil {
-                    
-                    print (error)
-                    
-                } else {
-                    
-                    print ("Error")
-                }
-                
-            }
-            
-        }
+
     }
 
     override func didReceiveMemoryWarning() {
