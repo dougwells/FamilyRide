@@ -127,7 +127,7 @@ class ViewController: UIViewController {
                         print("== Alert ==", displayErrorMessage)
                         
                         //Comment out createAlert to avoid login bug
-                        //self.createAlert(title: "Login Error(s)", message: displayErrorMessage)
+                            //self.createAlert(title: "Login Error(s)", message: displayErrorMessage)
                         return
                         
                     } else if user?["genderMale"] != nil
