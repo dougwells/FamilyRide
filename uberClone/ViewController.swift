@@ -12,6 +12,9 @@ import Parse
 
 class ViewController: UIViewController {
     
+    //spinner
+    let activityIndicator = UIActivityIndicatorView.init(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+    
     var signupMode = true
     
     @IBOutlet weak var emailTextField: UITextField!
@@ -34,7 +37,52 @@ class ViewController: UIViewController {
             changeSignupModeButton.setTitle("Log In", for: [])
         }
         signupMode = !signupMode
+    } //end function changeSignupMode
+    
+    func startSpinner(){
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        UIApplication.shared.beginIgnoringInteractionEvents()
+        
+    }  //End startSpinner
+    
+    func stopSpinner(){
+        activityIndicator.stopAnimating()
+        UIApplication.shared.endIgnoringInteractionEvents()
     }
+    
+    func createAlert(title: String, message: String ) {
+        //creat alert
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        //add button to alert
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+            print("=== Alert OK pressed")
+            self.dismiss(animated: true, completion: nil)
+            return
+            
+        }))
+        
+        //present alert
+        self.present(alert, animated: true, completion: nil)
+    }  //End createAlert
+
+    
+    @IBAction func signupOrLogin(_ sender: Any) {
+        
+        if emailTextField.text == "" || passwordTextField.text == "" {
+            
+            createAlert(title: "Error in form", message: "Please enter both username and password")
+            
+        }
+        
+    } //end func signupOrLogin
+    
+    
+
     
 
     override func viewDidLoad() {
