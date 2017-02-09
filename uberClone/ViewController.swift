@@ -77,6 +77,76 @@ class ViewController: UIViewController {
             
             createAlert(title: "Error in form", message: "Please enter both username and password")
             
+        } else {    //Signup Mode
+            startSpinner()
+            if signupMode {  //signup Mode
+                // Save user in Parse
+                let user = PFUser()
+                user.username = emailTextField.text
+                user.password = passwordTextField.text
+                print("== username & password ==", user.username, user.password)
+                
+                
+                //Let public write to User field (ACL)
+                let acl = PFACL()
+                acl.getPublicWriteAccess = true
+                user.acl = acl
+                
+                
+                user.signUpInBackground { (success, error) -> Void in
+                    self.stopSpinner()
+                    if success {
+                        print("New user \(user.username!) saved")
+                        
+                        //self.performSegue(withIdentifier: "showProfile", sender: self)
+                        return
+                        
+                    } else {
+                        if error != nil {
+                            print("Error saving user")
+                            var displayErrorMessage = "Please try again later ..."
+                            if let errorMessage = error as NSError? {
+                                displayErrorMessage = errorMessage.userInfo["error"] as! String
+                            }
+                            print("== Signup Error Alert ==", displayErrorMessage)
+                            self.createAlert(title: "Signup Error", message: displayErrorMessage)
+                        }
+                        return
+                    }
+                }
+            } else {    // Login mode
+                PFUser.logInWithUsername(inBackground: emailTextField.text!, password: passwordTextField.text!, block: { (user, error) in
+                    self.stopSpinner()
+                    
+                    if error != nil {
+                        print("== Error logging in existing user  ", user?.username, error)
+                        var displayErrorMessage = "Please try again later ..."
+                        if let errorMessage = error as NSError? {
+                            displayErrorMessage = errorMessage.userInfo["error"] as! String
+                        }
+                        print("== Alert ==", displayErrorMessage)
+                        
+                        //Comment out createAlert to avoid login bug
+                        //self.createAlert(title: "Login Error(s)", message: displayErrorMessage)
+                        return
+                        
+                    } else if user?["genderMale"] != nil
+                        && user?["interestMale"] != nil
+                        && user?["userImage"] != nil
+                        
+                    {
+                        print("=== User logged in with datafields. Perform segue 1 ===")
+                        //self.performSegue(withIdentifier: "showMatchesFromLogin", sender: self)
+                        
+                    } else {
+                        
+                        print("=== User logged in w/o datafields. Perform segue 2 ===")
+                        //self.performSegue(withIdentifier: "showProfile", sender: self)
+                    }
+                    return
+                    
+                })
+            }
         }
         
     } //end func signupOrLogin
