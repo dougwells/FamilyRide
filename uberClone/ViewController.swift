@@ -17,6 +17,7 @@ class ViewController: UIViewController {
     
     var signupMode = true
     
+    @IBOutlet weak var isDriverSwitch: UISwitch!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var signupOrLoginButton: UIButton!
@@ -59,12 +60,7 @@ class ViewController: UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
         
         //add button to alert
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
-            print("=== Alert OK pressed")
-            self.dismiss(animated: true, completion: nil)
-            return
-            
-        }))
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         
         //present alert
         self.present(alert, animated: true, completion: nil)
