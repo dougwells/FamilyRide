@@ -78,9 +78,18 @@ class ViewController: UIViewController {
             if signupMode {  //signup Mode
                 // Save user in Parse
                 let user = PFUser()
-                user.username = emailTextField.text
                 user.password = passwordTextField.text
-                print("== username & password ==", user.username, user.password)
+                user["isDriver"] = isDriverSwitch.isOn
+                user["appName"] = "uberClone"
+                
+                //Append "Driver" or "Rider" to username
+                if isDriverSwitch.isOn {
+                    user.username = "Driver-" + emailTextField.text!
+                } else {
+                    user.username = "Rider-" + emailTextField.text!
+                }
+                
+                print("== username, password & driver ==", user.username, user.password, user["isDriver"])
                 
                 
                 //Let public write to User field (ACL)
@@ -111,7 +120,20 @@ class ViewController: UIViewController {
                     }
                 }
             } else {    // Login mode
-                PFUser.logInWithUsername(inBackground: emailTextField.text!, password: passwordTextField.text!, block: { (user, error) in
+                
+                //append Driver or Rider to username
+                var loginName: String
+                
+                if isDriverSwitch.isOn {
+                    
+                    loginName = "Driver-" + emailTextField.text!
+                
+                } else {
+                    
+                    loginName = "Rider-" + emailTextField.text!
+                }
+                
+                PFUser.logInWithUsername(inBackground: loginName, password: passwordTextField.text!, block: { (user, error) in
                     self.stopSpinner()
                     
                     if error != nil {
@@ -137,7 +159,7 @@ class ViewController: UIViewController {
                     } else {
                         
                         print("=== User logged in w/o datafields. Perform segue 2 ===")
-                        //self.performSegue(withIdentifier: "showProfile", sender: self)
+                        self.performSegue(withIdentifier: "showRiderMap", sender: self)
                     }
                     return
                     
