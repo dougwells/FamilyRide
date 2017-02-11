@@ -15,6 +15,10 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     
     var locationManager = CLLocationManager()
     
+    //Default location is Park City, Utah
+    var latitude: CLLocationDegrees = 40.6461
+    var longitude: CLLocationDegrees = -111.498
+    
     @IBOutlet weak var map: MKMapView!
 
     @IBAction func logoutButton(_ sender: UIBarButtonItem) {
@@ -41,9 +45,9 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //set lat, lon and deltas
         let userLocation: CLLocation = locations[0]
-        print(userLocation)
-        let latitude = userLocation.coordinate.latitude
-        let longitude = userLocation.coordinate.longitude
+        print("user location =", userLocation)
+        latitude = userLocation.coordinate.latitude
+        longitude = userLocation.coordinate.longitude
         let latDelta: CLLocationDegrees = 0.02
         let lonDelta: CLLocationDegrees = 0.02
         
@@ -58,6 +62,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         
         //Finally, time to tell iOS where in map to set initial location and zoom level
         self.map.setRegion(region, animated: true)
+        saveCurrUserLocation()
         
         //set annotation (delete prev annot & create new one)
         if map.annotations.count != 0 {
@@ -67,6 +72,22 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         annotation.coordinate.latitude = latitude
         annotation.coordinate.longitude = longitude
         self.map.addAnnotation(annotation)
+    }
+    
+    func saveCurrUserLocation() {
+        //find user location (need to add "Privacy - Location when in use in plist for PFGeopoint to work
+        
+        PFGeoPoint.geoPointForCurrentLocation { (geopoint, error) in
+            print("saveCurrUserLocation returned. PFGeopoint =", geopoint)
+            if let geopoint = geopoint {
+                
+                let riderRequest = PFObject(className: "RiderRequest")
+                
+                riderRequest["location"] = geopoint as? PFGeoPoint
+                riderRequest["username"] = PFUser.current()?.username
+                riderRequest.saveInBackground()
+            }
+        }
     }
     
 
