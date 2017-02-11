@@ -44,12 +44,14 @@
                                 <color key="textColor" red="0.41492170099999998" green="1" blue="0.31217837329999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GgY-w3-Wys">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GgY-w3-Wys">
                                 <rect key="frame" x="135.5" y="76" width="51" height="31"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="31" id="NLt-vq-Cmq"/>
                                     <constraint firstAttribute="width" constant="49" id="QrV-Ld-c0v"/>
                                 </constraints>
+                                <color key="onTintColor" red="0.82963556051254272" green="0.8425019383430481" blue="0.84636634588241577" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="thumbTintColor" red="0.41492170099999998" green="1" blue="0.31217837329999998" alpha="1" colorSpace="calibratedRGB"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Driver" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ru-11-cUp">
                                 <rect key="frame" x="194.5" y="76" width="73" height="34"/>
@@ -79,7 +81,7 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Already have an account?" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bR2-9f-9b3">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't have an account?" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bR2-9f-9b3">
                                 <rect key="frame" x="16" y="378" width="202" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="TTe-ef-EfQ"/>
@@ -105,7 +107,7 @@
                                     <constraint firstAttribute="width" constant="78" id="EZR-WA-Pif"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <state key="normal" title="Sign up">
+                                <state key="normal" title="Login">
                                     <color key="titleColor" red="0.37009188009999999" green="1" blue="0.075723919469999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
@@ -119,7 +121,7 @@
                                     <constraint firstAttribute="height" constant="36" id="rgg-Pb-9tw"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <state key="normal" title="Login">
+                                <state key="normal" title="Sign up">
                                     <color key="titleColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>

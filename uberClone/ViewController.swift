@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     //spinner
     let activityIndicator = UIActivityIndicatorView.init(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
     
-    var signupMode = true
+    var signupMode = false
     
     @IBOutlet weak var isDriverSwitch: UISwitch!
     @IBOutlet weak var emailTextField: UITextField!
