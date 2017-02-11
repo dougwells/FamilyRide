@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import CoreLocation
 import MapKit
 import Parse
 
-class riderMapViewController: UIViewController, MKMapViewDelegate {
+class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
+    
+    var locationManager = CLLocationManager()
     
     @IBOutlet weak var map: MKMapView!
 
@@ -23,11 +26,26 @@ class riderMapViewController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //Set vars to make code cleaner.  Note: CL stands for "Call Location"
-        let latitude: CLLocationDegrees = 40.6461
-        let longitude: CLLocationDegrees = -111.4980
-        let latDelta: CLLocationDegrees = 0.03	//amnt of lat/lon in set amount of space
-        let lonDelta: CLLocationDegrees = 0.03	//lower = less distance so more “zoom”
+        locationManager.delegate = self  //sets delegate to VC so VC can control it
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation  //several accuracies avail.
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        //set lat, lon and deltas
+        let userLocation: CLLocation = locations[0]
+        print(userLocation)
+        let latitude = userLocation.coordinate.latitude
+        let longitude = userLocation.coordinate.longitude
+        let latDelta: CLLocationDegrees = 0.02
+        let lonDelta: CLLocationDegrees = 0.02
         
         //Sets "zoom" level
         let span: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
@@ -39,16 +57,16 @@ class riderMapViewController: UIViewController, MKMapViewDelegate {
         let region: MKCoordinateRegion = MKCoordinateRegion(center: location, span: span)
         
         //Finally, time to tell iOS where in map to set initial location and zoom level
-        //Technically, could simply use this line but code would not be clear ...
-        map.setRegion(region, animated: true)
-
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        self.map.setRegion(region, animated: true)
+        
+        //set annotation (delete prev annot & create new one)
+        if map.annotations.count != 0 {
+            map.removeAnnotations(map.annotations)
+        }
+        let annotation = MKPointAnnotation()
+        annotation.coordinate.latitude = latitude
+        annotation.coordinate.longitude = longitude
+        self.map.addAnnotation(annotation)
     }
     
 

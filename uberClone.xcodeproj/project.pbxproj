@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		70577E591E4E4F0700987E41 /* riderMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70577E581E4E4F0700987E41 /* riderMapViewController.swift */; };
+		70577E5B1E4F80E500987E41 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70577E5A1E4F80E500987E41 /* CoreLocation.framework */; };
 		70AB95B31E4B6C160070C513 /* chauffer.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 70AB95B21E4B6C160070C513 /* chauffer.jpg */; };
 		70AB95B51E4B6C260070C513 /* cityCar.png in Resources */ = {isa = PBXBuildFile; fileRef = 70AB95B41E4B6C260070C513 /* cityCar.png */; };
 		70AB95B71E4B6C320070C513 /* colorfulCars.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 70AB95B61E4B6C320070C513 /* colorfulCars.jpg */; };
@@ -26,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		70577E581E4E4F0700987E41 /* riderMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = riderMapViewController.swift; sourceTree = "<group>"; };
+		70577E5A1E4F80E500987E41 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		705B139B1E48C7D600F23920 /* uberClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = uberClone.entitlements; sourceTree = "<group>"; };
 		70AB95B21E4B6C160070C513 /* chauffer.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chauffer.jpg; sourceTree = "<group>"; };
 		70AB95B41E4B6C260070C513 /* cityCar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cityCar.png; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70577E5B1E4F80E500987E41 /* CoreLocation.framework in Frameworks */,
 				81BA817F1A49E0F000E65899 /* libstdc++.6.dylib in Frameworks */,
 				81BA817B1A49E0E500E65899 /* SystemConfiguration.framework in Frameworks */,
 				81BA81791A49E0DB00E65899 /* AudioToolbox.framework in Frameworks */,
@@ -110,6 +113,7 @@
 		81BA816A1A49DB5600E65899 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				70577E5A1E4F80E500987E41 /* CoreLocation.framework */,
 				81BA816B1A49DB6800E65899 /* Bolts.framework */,
 				81BA816C1A49DB6800E65899 /* Parse.framework */,
 				81BA816E1A49DB6800E65899 /* ParseFacebookUtils.framework */,
