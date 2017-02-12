@@ -70,11 +70,29 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.callAnUberButton.isHidden = true
+        
         locationManager.delegate = self  //sets delegate to VC so VC can control it
         locationManager.desiredAccuracy = kCLLocationAccuracyBest  //several accuracies avail.
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         map.showsUserLocation = true  //shows user location
+        
+        /*
+         if user closes app w/o cancelling Uber, there is an outstanding
+         Uber request when app re-opens.  Therefore, force user to cancel
+         existing Uber before ordering a new one
+        */
+        let query = PFQuery(className: "RiderRequest")
+        query.whereKey("riderId", equalTo: PFUser.current()?.objectId)
+        
+        query.findObjectsInBackground(block: { (objects, error) in
+            if objects?.count != 0 {
+                self.existingUberRequest = true
+                self.callAnUberButton.setTitle("Cancel Uber", for: [])
+            }
+            self.callAnUberButton.isHidden = false
+        })
         
     }
 
@@ -108,8 +126,6 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         self.map.setRegion(region, animated: true)
         
         
-        //update pickup location
-            //self.updateUberPickupLocation()
     }
     
     func createAlert(title: String, message: String ) {
@@ -136,6 +152,10 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     func makeNewUberRequest() {
         existingUberRequest = true
         callAnUberButton.setTitle("Cancel Uber", for: [])
+        
+        /*  Could also have made a PFGeopoint
+            riderRequest["location"] = PFGeopoint(latitude: latitude, longitude: longitude)
+        */
     
         PFGeoPoint.geoPointForCurrentLocation { (geopoint, error) in
             self.createAlert(title: "Uber", message: "Your pickup request has been made.")
@@ -151,6 +171,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
             }
         }
     }
+    
     @IBAction func updatePickupLocation(_ sender: UIBarButtonItem) {
         
         self.updateUberPickupLocation()
