@@ -191,10 +191,15 @@
                                 <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <items>
-                                    <navigationItem title="uberClone" id="mH6-Dx-vm0">
+                                    <navigationItem title="Uber" id="mH6-Dx-vm0">
                                         <barButtonItem key="leftBarButtonItem" title="Logout" id="hAO-Gt-hTB">
                                             <connections>
                                                 <action selector="logoutButton:" destination="D9i-w2-2HS" id="i8h-q6-YCn"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Update Pickup" id="K3E-Wr-XS8">
+                                            <connections>
+                                                <action selector="updatePickupLocation:" destination="D9i-w2-2HS" id="DeY-Es-pHn"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
