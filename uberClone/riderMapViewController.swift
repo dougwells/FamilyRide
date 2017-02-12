@@ -14,24 +14,29 @@ import Parse
 class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
     var locationManager = CLLocationManager()
-    
-    //Default location is Park City, Utah
-    var latitude: CLLocationDegrees = 40.6461
-    var longitude: CLLocationDegrees = -111.498
-    
+    var latitude: CLLocationDegrees = 0.0
+    var longitude: CLLocationDegrees = 0.0
     @IBOutlet weak var map: MKMapView!
 
     @IBAction func logoutButton(_ sender: UIBarButtonItem) {
-        
-        performSegue(withIdentifier: "riderMapToLogin", sender: self)
-    }
+        print("Logging out \(PFUser.current()?.username).")
+        self.locationManager.stopUpdatingLocation()
+        self.performSegue(withIdentifier: "riderMapToLogin", sender: self)
+        PFUser.logOutInBackground(block: { (error) in
+            if error != nil {
+                print("error logging out user \(PFUser.current()?.username)")
+            } else {
+                print("logged out user \(PFUser.current()?.username)")
+            }
+        })
+    } //end logoutButton
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         locationManager.delegate = self  //sets delegate to VC so VC can control it
-        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation  //several accuracies avail.
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest  //several accuracies avail.
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
@@ -44,10 +49,13 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //set lat, lon and deltas
-        let userLocation: CLLocation = locations[0]
-        print("user location =", userLocation)
-        latitude = userLocation.coordinate.latitude
-        longitude = userLocation.coordinate.longitude
+        
+        if let riderLocation = manager.location?.coordinate {
+            latitude = riderLocation.latitude
+            longitude = riderLocation.longitude
+            print("user location =", latitude, longitude)
+        }
+
         let latDelta: CLLocationDegrees = 0.02
         let lonDelta: CLLocationDegrees = 0.02
         
@@ -62,7 +70,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         
         //Finally, time to tell iOS where in map to set initial location and zoom level
         self.map.setRegion(region, animated: true)
-        saveCurrUserLocation()
+        //saveCurrUserLocation()
         
         //set annotation (delete prev annot & create new one)
         if map.annotations.count != 0 {
