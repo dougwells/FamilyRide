@@ -14,9 +14,64 @@ import Parse
 class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
     var locationManager = CLLocationManager()
+    var existingUberRequest = false
     var latitude: CLLocationDegrees = 0.0
     var longitude: CLLocationDegrees = 0.0
     @IBOutlet weak var map: MKMapView!
+    @IBOutlet weak var callAnUberButton: UIButton!
+    
+    func createAlert(title: String, message: String ) {
+        //creat alert
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        //add button to alert
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        //present alert
+        self.present(alert, animated: true, completion: nil)
+    }  //End createAlert
+    
+    
+    @IBAction func callAnUber(_ sender: UIButton) {
+        
+        if !existingUberRequest {
+            existingUberRequest = true
+            sender.setTitle("Cancel Uber", for: [])
+            
+            PFGeoPoint.geoPointForCurrentLocation { (geopoint, error) in
+                self.createAlert(title: "Uber", message: "Your pickup request has been made.")
+                print("Uber requested. PFGeopoint =", geopoint)
+                if let geopoint = geopoint {
+                    
+                    let riderRequest = PFObject(className: "RiderRequest")
+                    
+                    riderRequest["location"] = geopoint as? PFGeoPoint
+                    riderRequest["username"] = PFUser.current()?.username
+                    riderRequest["riderId"] = PFUser.current()?.objectId
+                    riderRequest.saveInBackground()
+                }
+            }
+        } else {
+            existingUberRequest = false
+            sender.setTitle("Call an Uber", for: [])
+            self.createAlert(title: "Uber", message: "Your Uber request has been cancelled.")
+            let query = PFQuery(className: "RiderRequest")
+            query.whereKey("riderId", equalTo: PFUser.current()?.objectId)
+            query.findObjectsInBackground(block: { (objects, error) in
+                if let requests = objects {
+                    for object in requests {
+                        if let request = object as? PFObject {
+                            request.deleteInBackground()
+                        }
+                    }
+                }
+            })
+        }
+        
+        
+        
+    }
+    
 
     @IBAction func logoutButton(_ sender: UIBarButtonItem) {
         print("Logging out \(PFUser.current()?.username).")
@@ -39,6 +94,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         locationManager.desiredAccuracy = kCLLocationAccuracyBest  //several accuracies avail.
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        map.showsUserLocation = true  //shows user location
         
     }
 
@@ -79,8 +135,11 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         let annotation = MKPointAnnotation()
         annotation.coordinate.latitude = latitude
         annotation.coordinate.longitude = longitude
+        annotation.title = "Rider location"
         self.map.addAnnotation(annotation)
     }
+    
+    
     
     func saveCurrUserLocation() {
         //find user location (need to add "Privacy - Location when in use in plist for PFGeopoint to work
@@ -93,6 +152,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                 
                 riderRequest["location"] = geopoint as? PFGeoPoint
                 riderRequest["username"] = PFUser.current()?.username
+                riderRequest["riderId"] = PFUser.current()?.objectId
                 riderRequest.saveInBackground()
             }
         }

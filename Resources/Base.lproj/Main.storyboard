@@ -214,7 +214,10 @@
                                     <constraint firstAttribute="height" constant="50" id="iU8-DJ-JgF"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                                <state key="normal" title="Cancel Uber"/>
+                                <state key="normal" title="Call an Uber"/>
+                                <connections>
+                                    <action selector="callAnUber:" destination="D9i-w2-2HS" eventType="touchUpInside" id="DzX-zv-jku"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -226,6 +229,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="callAnUberButton" destination="dhL-8m-pTh" id="vEb-Gd-nuy"/>
                         <outlet property="map" destination="BZk-xt-hQS" id="P80-os-Z7e"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="riderMapToLogin" id="Azy-uZ-jeF"/>
                     </connections>
