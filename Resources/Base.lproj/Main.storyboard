@@ -169,6 +169,7 @@
                         <outlet property="passwordTextField" destination="Qe5-c3-EkG" id="xlJ-sM-B1q"/>
                         <outlet property="signupOrLoginButton" destination="fb4-Zz-Av5" id="03P-ca-KqB"/>
                         <segue destination="D9i-w2-2HS" kind="show" identifier="showRiderMap" id="Wuv-eh-241"/>
+                        <segue destination="3bC-LP-uGs" kind="show" identifier="showActiveRideRequests" id="vct-2M-oNE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -243,8 +244,52 @@
             </objects>
             <point key="canvasLocation" x="-543.75" y="-153.75"/>
         </scene>
+        <!--Active Ride RequestsVC-->
+        <scene sceneID="TYr-dZ-F6l">
+            <objects>
+                <viewController id="3bC-LP-uGs" customClass="ActiveRideRequestsVC" customModule="uberClone" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="hGx-rn-k5n"/>
+                        <viewControllerLayoutGuide type="bottom" id="Vy6-Oa-iYO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Ffg-mv-f2B">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="O82-jI-Wmh">
+                                <rect key="frame" x="0.0" y="94" width="320" height="386"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MKv-1X-9Ew">
+                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="Active Ride Requests" id="rVe-I3-PQX">
+                                        <barButtonItem key="leftBarButtonItem" title="Logout" id="GTT-wg-SxU">
+                                            <connections>
+                                                <action selector="logout:" destination="3bC-LP-uGs" id="4wB-p3-jbL"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="rideRequestsToLogin" id="i8M-Fv-EMH"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SFb-aN-1Vf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-528.75" y="638.75"/>
+        </scene>
     </scenes>
     <resources>
         <image name="cityCar.png" width="550" height="297"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="i8M-Fv-EMH"/>
+    </inferredMetricsTieBreakers>
 </document>

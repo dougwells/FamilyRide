@@ -148,17 +148,12 @@ class ViewController: UIViewController {
                             //self.createAlert(title: "Login Error(s)", message: displayErrorMessage)
                         return
                         
-                    } else if user?["genderMale"] != nil
-                        && user?["interestMale"] != nil
-                        && user?["userImage"] != nil
-                        
-                    {
-                        print("=== User logged in with datafields. Perform segue 1 ===")
-                        //self.performSegue(withIdentifier: "showMatchesFromLogin", sender: self)
+                    } else if self.isDriverSwitch.isOn {
+                        self.performSegue(withIdentifier: "showActiveRideRequests", sender: self)
+
                         
                     } else {
                         
-                        print("=== User logged in w/o datafields. Perform segue 2 ===")
                         self.performSegue(withIdentifier: "showRiderMap", sender: self)
                     }
                     return
