@@ -46,7 +46,29 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         
         self.locationManager.stopUpdatingLocation()
         
-        self.cancelExistingUberRequest()
+        existingUberRequest = false
+        
+        if map.annotations.count != 0 {
+            map.removeAnnotations(map.annotations)
+        }
+        
+        
+        
+        
+        //Did not use this function as gives user alert but no way to respond
+            //self.cancelExistingUberRequest()
+        
+        let query = PFQuery(className: "RiderRequest")
+        query.whereKey("riderId", equalTo: PFUser.current()?.objectId)
+        query.findObjectsInBackground(block: { (objects, error) in
+            if let requests = objects {
+                for object in requests {
+                    if let request = object as? PFObject {
+                        request.deleteInBackground()
+                    }
+                }
+            }
+        })
         
         PFUser.logOutInBackground(block: { (error) in
             
@@ -214,7 +236,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                 query.findObjectsInBackground(block: { (objects, error) in
                     if let requests = objects {
                         if  requests.count == 0 {
-                            self.createAlert(title: "Unable to update pickup location.", message: "Please cancel existing Uber & make new request.")
+                            self.createAlert(title: "Unable to update pickup location.", message: "You do not have an existing Uber pickup request.  Please call an Uber.")
                             print("Update Pickup error:", error)
                         } else {
                             for object in requests {
