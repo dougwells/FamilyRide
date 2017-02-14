@@ -9,7 +9,11 @@
 import UIKit
 import Parse
 
-class ActiveRideRequestsTableVC: UITableViewController {
+class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegate {
+    
+    let locationManager = CLLocationManager()
+    var requestUsernames = [String]()
+    
     
     @IBAction func logout(_ sender: Any) {
         print("Logging out \(PFUser.current()?.username).")
@@ -30,6 +34,19 @@ class ActiveRideRequestsTableVC: UITableViewController {
             }
         })
     }
+    
+
+    
+    func createAlert(title: String, message: String ) {
+        //creat alert
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        //add button to alert
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        //present alert
+        self.present(alert, animated: true, completion: nil)
+    }  //End createAlert
 
     
     
@@ -42,6 +59,37 @@ class ActiveRideRequestsTableVC: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
+        locationManager.delegate = self  //sets delegate to VC so VC can control it
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest  //several accuracies avail.
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = manager.location?.coordinate {
+            let driverGeoPoint = PFGeoPoint(latitude: location.latitude, longitude: location.longitude)
+            let query = PFQuery(className: "RiderRequest")
+            query.whereKey("location", nearGeoPoint: driverGeoPoint )
+            query.limit = 10
+            requestUsernames.removeAll()
+            query.findObjectsInBackground(block: { (objects, error) in
+                if let riderRequests = objects {
+                    for riderRequest in riderRequests {
+                        let requestId = riderRequest.objectId
+                        let riderName = riderRequest["username"]
+                        let riderId = riderRequest["userId"]
+                        let riderLocation = riderRequest["location"] as? PFGeoPoint
+                        let distance = riderLocation?.distanceInMiles(to: driverGeoPoint)
+                        self.requestUsernames.append(riderName as! String)
+                        print("Username", riderName)
+    
+                    }
+                }
+                self.tableView.reloadData()
+            })
+            
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -58,15 +106,17 @@ class ActiveRideRequestsTableVC: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 4
+        return requestUsernames.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        
 
         // Configure the cell...
-        cell.textLabel?.text = "Item #\(indexPath.row)"
+        cell.textLabel?.text = requestUsernames[indexPath.row]
 
         return cell
     }
