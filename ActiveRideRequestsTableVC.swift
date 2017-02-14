@@ -13,6 +13,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     
     let locationManager = CLLocationManager()
     var requestUsernames = [String]()
+    var requestObjectIds = [String]()
     
     
     @IBAction func logout(_ sender: Any) {
@@ -29,6 +30,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                 print("logged out user \(PFUser.current()?.username)")
                 
                 self.navigationController?.navigationBar.isHidden = true
+                self.locationManager.stopUpdatingLocation()
                 self.performSegue(withIdentifier: "activeRideReqTableToLogin", sender: self)
                 
             }
@@ -67,15 +69,22 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
         if let location = manager.location?.coordinate {
+            
             let driverGeoPoint = PFGeoPoint(latitude: location.latitude, longitude: location.longitude)
+            
             let query = PFQuery(className: "RiderRequest")
             query.whereKey("location", nearGeoPoint: driverGeoPoint )
             query.limit = 10
+            
             requestUsernames.removeAll()
+            requestObjectIds.removeAll()
+            
             query.findObjectsInBackground(block: { (objects, error) in
                 if let riderRequests = objects {
                     for riderRequest in riderRequests {
+                        
                         let requestId = riderRequest.objectId
                         let riderName = riderRequest["username"]
                         let riderId = riderRequest["userId"]

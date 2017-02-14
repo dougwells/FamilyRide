@@ -89,7 +89,7 @@ class ViewController: UIViewController {
                     user.username = "Rider-" + emailTextField.text!
                 }
                 
-                print("== username, password & driver ==", user.username, user.password, user["isDriver"])
+                print("== username, password & isDriver ==", user.username, user.password, user["isDriver"])
                 
                 
                 //Let public write to User field (ACL)
@@ -103,7 +103,15 @@ class ViewController: UIViewController {
                     if success {
                         print("New user \(user.username!) saved")
                         
-                        //self.performSegue(withIdentifier: "showProfile", sender: self)
+                        if self.isDriverSwitch.isOn {
+                            
+                            self.performSegue(withIdentifier: "showActiveRideRequests", sender: self)
+                            
+                        } else {
+                            self.performSegue(withIdentifier: "showRiderMap", sender: self)
+                        }
+                        
+                        
                         return
                         
                     } else {
@@ -145,7 +153,7 @@ class ViewController: UIViewController {
                         print("== Alert ==", displayErrorMessage)
                         
                         //Comment out createAlert to avoid login bug
-                            //self.createAlert(title: "Login Error(s)", message: displayErrorMessage)
+                            self.createAlert(title: "Login Error(s)", message: displayErrorMessage)
                         return
                         
                     } else if self.isDriverSwitch.isOn {
