@@ -91,6 +91,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                         let riderLocation = riderRequest["location"] as? PFGeoPoint
                         let distance = riderLocation?.distanceInMiles(to: driverGeoPoint)
                         self.requestUsernames.append(riderName as! String)
+                        self.requestObjectIds.append(requestId! as String)
                         print("Username", riderName)
     
                     }
@@ -99,6 +100,10 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
             })
             
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {   //activate Segue to secondView
+        performSegue(withIdentifier: "mapToPickup", sender: nil)
     }
 
     override func didReceiveMemoryWarning() {
