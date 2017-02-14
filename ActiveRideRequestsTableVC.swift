@@ -11,12 +11,17 @@ import Parse
 
 class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegate {
     
+    @IBAction func updateTable(_ sender: UIBarButtonItem) {
+        updateActiveRideRequestsTable()
+    }
+    
     let locationManager = CLLocationManager()
     var requestUsernames = [String]()
     var requestObjectIds = [String]()
     
     
     @IBAction func logout(_ sender: Any) {
+        
         print("Logging out \(PFUser.current()?.username).")
         
         PFUser.logOutInBackground(block: { (error) in
@@ -55,6 +60,8 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        updateActiveRideRequestsTable()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -65,7 +72,9 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
         locationManager.delegate = self  //sets delegate to VC so VC can control it
         locationManager.desiredAccuracy = kCLLocationAccuracyBest  //several accuracies avail.
         locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
+        
+        // Uncomment if want auto-update of table (~ every 2 seconds)
+            //locationManager.startUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -103,6 +112,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {   //activate Segue to secondView
+        print("indexPath = ", indexPath.row)
         performSegue(withIdentifier: "mapToPickup", sender: nil)
     }
 
@@ -110,6 +120,40 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func updateActiveRideRequestsTable() {
+        
+        PFGeoPoint.geoPointForCurrentLocation { (geopoint, error) in
+            
+            if let driverGeoPoint = geopoint {
+                let query = PFQuery(className: "RiderRequest")
+                query.whereKey("location", nearGeoPoint: driverGeoPoint )
+                query.limit = 10
+                
+                self.requestUsernames.removeAll()
+                self.requestObjectIds.removeAll()
+                
+                query.findObjectsInBackground(block: { (objects, error) in
+                    if let riderRequests = objects {
+                        for riderRequest in riderRequests {
+                            
+                            let requestId = riderRequest.objectId
+                            let riderName = riderRequest["username"]
+                            let riderId = riderRequest["userId"]
+                            let riderLocation = riderRequest["location"] as? PFGeoPoint
+                            let distance = riderLocation?.distanceInMiles(to: driverGeoPoint)
+                            self.requestUsernames.append(riderName as! String)
+                            self.requestObjectIds.append(requestId! as String)
+                            //print("Username", riderName)
+                            
+                        }
+                    }
+                    self.tableView.reloadData()
+                })
+
+            }
+        }
+    } //end updateUberPickupLocation
 
     // MARK: - Table view data source
 

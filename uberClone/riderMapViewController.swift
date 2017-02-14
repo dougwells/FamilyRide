@@ -253,7 +253,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                 })
             }
         }
-    }
+    } //end updateUberPickupLocation
     
 
     /*

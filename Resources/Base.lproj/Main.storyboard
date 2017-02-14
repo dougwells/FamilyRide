@@ -274,6 +274,11 @@
                                 <action selector="logout:" destination="DcK-kO-swh" id="dub-PP-cEH"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Update" id="Mtj-tt-8Xa">
+                            <connections>
+                                <action selector="updateTable:" destination="DcK-kO-swh" id="SUl-je-a4j"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
