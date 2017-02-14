@@ -11,14 +11,20 @@ import Parse
 
 class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegate {
     
-    @IBAction func updateTable(_ sender: UIBarButtonItem) {
-        updateActiveRideRequestsTable()
-    }
     
     let locationManager = CLLocationManager()
     var requestUsernames = [String]()
     var requestObjectIds = [String]()
     
+    
+    @IBAction func tableToMap(_ sender: UIBarButtonItem) {
+        performSegue(withIdentifier: "tableToMap", sender: self)
+    }
+
+    
+    @IBAction func updateTable(_ sender: UIBarButtonItem) {
+        updateActiveRideRequestsTable()
+    }
     
     @IBAction func logout(_ sender: Any) {
         
@@ -35,6 +41,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                 print("logged out user \(PFUser.current()?.username)")
                 
                 self.navigationController?.navigationBar.isHidden = true
+                self.navigationController?.toolbar.isHidden = true
                 self.locationManager.stopUpdatingLocation()
                 self.performSegue(withIdentifier: "activeRideReqTableToLogin", sender: self)
                 
@@ -61,6 +68,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.setToolbarHidden(false, animated: false)
         updateActiveRideRequestsTable()
 
         // Uncomment the following line to preserve selection between presentations
@@ -118,7 +126,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {   //activate Segue to secondView
         print("indexPath = ", indexPath.row)
-        performSegue(withIdentifier: "mapToPickup", sender: nil)
+        performSegue(withIdentifier: "tableToDirections", sender: nil)
     }
 
     override func didReceiveMemoryWarning() {
