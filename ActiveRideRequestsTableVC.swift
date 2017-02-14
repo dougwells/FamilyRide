@@ -41,7 +41,9 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                 print("logged out user \(PFUser.current()?.username)")
                 
                 self.navigationController?.navigationBar.isHidden = true
-                self.navigationController?.toolbar.isHidden = true
+                //self.navigationController?.toolbar.isHidden = true
+                self.navigationController?.setToolbarHidden(true, animated: false)
+                
                 self.locationManager.stopUpdatingLocation()
                 self.performSegue(withIdentifier: "activeRideReqTableToLogin", sender: self)
                 
@@ -69,6 +71,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
         super.viewDidLoad()
         
         self.navigationController?.setToolbarHidden(false, animated: false)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         updateActiveRideRequestsTable()
 
         // Uncomment the following line to preserve selection between presentations
