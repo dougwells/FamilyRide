@@ -79,6 +79,10 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
+        updateActiveRideRequestsTable()
+        
+        /*  Using CLLocation to find driver's position
+         
         if let location = manager.location?.coordinate {
             
             let driverGeoPoint = PFGeoPoint(latitude: location.latitude, longitude: location.longitude)
@@ -109,6 +113,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
             })
             
         }
+    */
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {   //activate Segue to secondView
