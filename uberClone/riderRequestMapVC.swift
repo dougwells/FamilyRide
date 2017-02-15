@@ -14,14 +14,23 @@ import CoreLocation
 class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
     @IBOutlet weak var map: MKMapView!
+    var locationManager = CLLocationManager()
     var requestUsernames = [String]()
     var requestObjectIds = [String]()
     var requestPFGeopoints = [PFGeoPoint]()
+    var latitude: CLLocationDegrees = 0.0
+    var longitude: CLLocationDegrees = 0.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationManager.delegate = self  //sets delegate to VC so VC can control it
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest  //several accuracies avail.
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        map.showsUserLocation = true  //shows user location
+        self.updateRideRequestsMap()
 
-        // Do any additional setup after loading the view.
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -29,11 +38,38 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Dispose of any resources that can be recreated.
     }
     
-    func createAnnotation (title: String, subTitle: String) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        //set lat, lon and deltas
+        
+        if let riderLocation = manager.location?.coordinate {
+            latitude = riderLocation.latitude
+            longitude = riderLocation.longitude
+            print("user location =", latitude, longitude)
+        }
+        
+        let latDelta: CLLocationDegrees = 0.10
+        let lonDelta: CLLocationDegrees = 0.10
+        
+        //Sets "zoom" level
+        let span: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
+        
+        //Sets location
+        let location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        
+        //Sets initial "region" (location and zoom level with vars "location" & "span")
+        let region: MKCoordinateRegion = MKCoordinateRegion(center: location, span: span)
+        
+        //Finally, time to tell iOS where in map to set initial location and zoom level
+        self.map.setRegion(region, animated: true)
+        
+        
+    }
+    
+    func createAnnotation (title: String, subTitle: String, point: PFGeoPoint) {
         let annotation = MKPointAnnotation()
         annotation.title = title
         annotation.subtitle = subTitle
-        annotation.coordinate = map.convert(touchPoint, toCoordinateFrom: self.map)
+        annotation.coordinate = CLLocationCoordinate2DMake(point.latitude, point.longitude)
         map.addAnnotation(annotation)
     }
     
@@ -55,12 +91,15 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
                         for riderRequest in riderRequests {
                             
                             let requestId = riderRequest.objectId
-                            let riderName = riderRequest["username"]
-                            let riderId = riderRequest["userId"]
+                            let riderName = riderRequest["username"] as? String
+                            let riderId = riderRequest["userId"] as? String
                             let riderLocation = riderRequest["location"] as? PFGeoPoint
                             let distance = riderLocation?.distanceInMiles(to: driverGeoPoint)
-                            self.requestUsernames.append(riderName as! String)
-                            self.requestObjectIds.append(requestId! as String)
+                            let distanceMessage = "Miles Away: \(String(describing: distance))"
+                            self.requestUsernames.append(riderName!)
+                            self.requestObjectIds.append(requestId!)
+                            self.requestPFGeopoints.append(riderLocation!)
+                            self.createAnnotation(title: riderName!, subTitle: distanceMessage, point: riderLocation!)
                             //print("Username", riderName)
                             
                         }
