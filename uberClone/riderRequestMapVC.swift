@@ -44,7 +44,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         if let riderLocation = manager.location?.coordinate {
             latitude = riderLocation.latitude
             longitude = riderLocation.longitude
-            print("user location =", latitude, longitude)
+            //print("user location =", latitude, longitude)
         }
         
         let latDelta: CLLocationDegrees = 0.10
@@ -111,6 +111,32 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     } //end updateRideRequestsMap
     
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        var view = mapView.dequeueReusableAnnotationView(withIdentifier: "AnnotationView Id")
+        if view == nil{
+            view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "AnnotationView Id")
+            view!.canShowCallout = true
+        } else {
+            view!.annotation = annotation
+        }
+        
+        view?.leftCalloutAccessoryView = nil
+        view?.rightCalloutAccessoryView = UIButton(type: UIButtonType.detailDisclosure)
+        //swift 1.2
+        //view?.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as UIButton
+        
+        return view
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if (control as? UIButton)?.buttonType == UIButtonType.detailDisclosure {
+            mapView.deselectAnnotation(view.annotation, animated: false)
+            performSegue(withIdentifier: "segue Id to detail vc", sender: view)
+        }
+    }
+
+//Your function to load the annotations in viewDidLoad
+
 
     
 
