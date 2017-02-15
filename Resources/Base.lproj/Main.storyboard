@@ -35,7 +35,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rider" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Pk-px-4n8">
-                                <rect key="frame" x="64.5" y="119" width="61" height="34"/>
+                                <rect key="frame" x="65" y="119" width="61" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="61" id="A27-kt-Pc6"/>
                                     <constraint firstAttribute="height" constant="34" id="fDp-qj-84O"/>
@@ -45,7 +45,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GgY-w3-Wys">
-                                <rect key="frame" x="135.5" y="120" width="51" height="31"/>
+                                <rect key="frame" x="136" y="120" width="51" height="31"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="31" id="NLt-vq-Cmq"/>
                                     <constraint firstAttribute="width" constant="49" id="QrV-Ld-c0v"/>
@@ -54,7 +54,7 @@
                                 <color key="thumbTintColor" red="0.41492170099999998" green="1" blue="0.31217837329999998" alpha="1" colorSpace="calibratedRGB"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Driver" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ru-11-cUp">
-                                <rect key="frame" x="194.5" y="120" width="73" height="34"/>
+                                <rect key="frame" x="195" y="120" width="73" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="aRv-fg-nR9"/>
                                     <constraint firstAttribute="width" constant="73" id="qHO-k9-k6L"/>
@@ -297,10 +297,10 @@
             </objects>
             <point key="canvasLocation" x="-343" y="611"/>
         </scene>
-        <!--View Controller-->
+        <!--Rider Request MapVC-->
         <scene sceneID="mAj-Ql-u1p">
             <objects>
-                <viewController id="xLm-pT-pJf" sceneMemberID="viewController">
+                <viewController id="xLm-pT-pJf" customClass="riderRequestMapVC" customModule="uberClone" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="g5g-KR-rqL"/>
                         <viewControllerLayoutGuide type="bottom" id="Sxb-Mw-NdY"/>
@@ -323,6 +323,7 @@
                     </view>
                     <toolbarItems/>
                     <connections>
+                        <outlet property="map" destination="x1I-tz-40H" id="kqR-ET-LkI"/>
                         <segue destination="SbK-dO-aOZ" kind="show" identifier="mapToDirections" id="q7h-zC-eLO"/>
                     </connections>
                 </viewController>
