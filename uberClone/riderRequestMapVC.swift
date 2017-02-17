@@ -111,11 +111,12 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     } //end updateRideRequestsMap
     
-    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView {
             performSegue(withIdentifier: "mapToDirections", sender: view)
+            print("annotation clicked")
         }
-    } 
+    }
 
     /*
     // MARK: - Navigation
