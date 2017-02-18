@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import Parse
+import Foundation
 import CoreLocation
 
 class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
@@ -23,6 +24,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.map.delegate = self
         locationManager.delegate = self  //sets delegate to VC so VC can control it
         locationManager.desiredAccuracy = kCLLocationAccuracyBest  //several accuracies avail.
         locationManager.requestWhenInUseAuthorization()
@@ -111,11 +113,67 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     } //end updateRideRequestsMap
     
+    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+            let pinAnnotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "myPin")
+            
+            pinAnnotationView.pinColor = .purple
+            pinAnnotationView.isDraggable = true
+            pinAnnotationView.canShowCallout = true
+            pinAnnotationView.animatesDrop = true
+            
+        let deleteButton = UIButton(type:UIButtonType.custom) as UIButton
+            deleteButton.frame.size.width = 44
+            deleteButton.frame.size.height = 44
+            deleteButton.backgroundColor = UIColor.red
+            deleteButton.setImage(UIImage(named: "trash"), for: .normal)
+            
+            pinAnnotationView.leftCalloutAccessoryView = deleteButton
+            
+            return pinAnnotationView
+    }
+    
+/*
+     func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+        mapView.removeAnnotation(annotation)
+    }
+ */
+
+    
+   /*
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView {
             performSegue(withIdentifier: "mapToDirections", sender: view)
             print("annotation clicked")
         }
+    }
+    */
+    
+    /*
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?{
+        if annotation is MKUserLocation {
+            //return nil so map view draws "blue dot" for standard user location
+            return nil
+        }
+        let reuseId = "pin"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+        pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+        if #available(iOS 9.0, *) {
+            pinView?.pinTintColor = UIColor.orange
+        } else {
+            // Fallback on earlier versions
+        }
+        pinView?.canShowCallout = true
+        let smallSquare = CGSize(width: 30, height: 30)
+        let button = UIButton(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: smallSquare))
+        button.setBackgroundImage(UIImage(named: "car"), for: .normal)
+        button.addTarget(self, action: "getDirections", for: .touchUpInside)
+        pinView?.leftCalloutAccessoryView = button
+        return pinView
+    }
+     */
+    
+    func getDirections(){
+        print("Hello World")
     }
 
     /*
