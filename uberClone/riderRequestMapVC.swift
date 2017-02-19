@@ -97,7 +97,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             let riderId = riderRequest["userId"] as? String
                             let riderLocation = riderRequest["location"] as? PFGeoPoint
                             let distance = riderLocation?.distanceInMiles(to: driverGeoPoint)
-                            let distanceMessage = "Miles Away: \(String(describing: distance))"
+                            let distanceMessage = String(format: "Distance: %.2f miles", distance!)
                             self.requestUsernames.append(riderName!)
                             self.requestObjectIds.append(requestId!)
                             self.requestPFGeopoints.append(riderLocation!)

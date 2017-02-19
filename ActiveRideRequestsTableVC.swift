@@ -17,6 +17,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     var requestObjectIds = [String]()
     
     
+    
     @IBAction func tableToMap(_ sender: UIBarButtonItem) {
         performSegue(withIdentifier: "tableToMap", sender: self)
     }
@@ -150,20 +151,24 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                 self.requestObjectIds.removeAll()
                 
                 query.findObjectsInBackground(block: { (objects, error) in
-                    if let riderRequests = objects {
-                        for riderRequest in riderRequests {
+                        if let riderRequests = objects {
+                            if riderRequests.count > 0 {
+                                for riderRequest in riderRequests {
                             
-                            let requestId = riderRequest.objectId
-                            let riderName = riderRequest["username"]
-                            let riderId = riderRequest["userId"]
-                            let riderLocation = riderRequest["location"] as? PFGeoPoint
-                            let distance = riderLocation?.distanceInMiles(to: driverGeoPoint)
-                            self.requestUsernames.append(riderName as! String)
-                            self.requestObjectIds.append(requestId! as String)
-                            //print("Username", riderName)
-                            
+                                    let requestId = riderRequest.objectId
+                                    let riderId = riderRequest["userId"]
+                                    let riderLocation = riderRequest["location"] as? PFGeoPoint
+                                    let distance = riderLocation!.distanceInMiles(to: driverGeoPoint)
+                                    let distanceString = String(format: ". Distance: %.2f miles", distance)
+                                    //let distanceString = String(describing:distance)
+                                    let riderName = riderRequest["username"]
+                                    self.requestUsernames.append(riderName as! String + distanceString)
+                                    self.requestObjectIds.append(requestId! as String)
+                                    //print("Username", riderName)
+                                }
+                            }
                         }
-                    }
+                    
                     self.tableView.reloadData()
                 })
 
