@@ -93,20 +93,21 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
                         for riderRequest in riderRequests {
                             
                             let requestId = riderRequest.objectId
-                            let riderName = riderRequest["username"] as? String
+                            let riderName = riderRequest["username"] as! String
+                            let riderNameArr = riderName.components(separatedBy: "-")
                             let riderId = riderRequest["userId"] as? String
                             let riderLocation = riderRequest["location"] as? PFGeoPoint
                             let distance = riderLocation?.distanceInMiles(to: driverGeoPoint)
                             let distanceMessage = String(format: "Distance: %.2f miles", distance!)
-                            self.requestUsernames.append(riderName!)
+                            let riderMessage = "\(riderNameArr[1]) | Distance: \(distanceMessage)"
+                            
+                            self.requestUsernames.append(riderNameArr[1])
                             self.requestObjectIds.append(requestId!)
                             self.requestPFGeopoints.append(riderLocation!)
-                            self.createAnnotation(title: riderName!, subTitle: distanceMessage, point: riderLocation!)
-                            //print("Username", riderName)
+                            self.createAnnotation(title: riderNameArr[1], subTitle: distanceMessage, point: riderLocation!)
                             
                         }
                     }
-                    //self.tableView.reloadData()
                 })
                 
             }

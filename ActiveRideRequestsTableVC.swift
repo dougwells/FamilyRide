@@ -8,6 +8,7 @@
 
 import UIKit
 import Parse
+import Foundation
 
 class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegate {
     
@@ -159,10 +160,12 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                                     let riderId = riderRequest["userId"]
                                     let riderLocation = riderRequest["location"] as? PFGeoPoint
                                     let distance = riderLocation!.distanceInMiles(to: driverGeoPoint)
-                                    let distanceString = String(format: ". Distance: %.2f miles", distance)
-                                    //let distanceString = String(describing:distance)
-                                    let riderName = riderRequest["username"]
-                                    self.requestUsernames.append(riderName as! String + distanceString)
+                                    let distanceString = String(format: "%.2f miles", distance)
+                                    let riderName = riderRequest["username"]! as! String
+                                    let riderNameArr = riderName.components(separatedBy: "-")
+                                    
+                                    let riderMessage = "\(riderNameArr[1]) | Distance: \(distanceString)"
+                                    self.requestUsernames.append(riderMessage)
                                     self.requestObjectIds.append(requestId! as String)
                                     //print("Username", riderName)
                                 }
