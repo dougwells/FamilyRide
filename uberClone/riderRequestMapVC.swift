@@ -34,11 +34,6 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
         
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //set lat, lon and deltas
@@ -114,6 +109,35 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     } //end updateRideRequestsMap
     
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if annotation is MKUserLocation { return nil }
+        
+        if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "") {
+            annotationView.annotation = annotation
+            return annotationView
+            
+        } else {
+            let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier:"")
+            annotationView.isEnabled = true
+            annotationView.canShowCallout = true
+            
+            let btn = UIButton(type: .detailDisclosure)
+            annotationView.rightCalloutAccessoryView = btn
+            return annotationView
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        let capital = view.annotation
+        let placeName = capital?.title
+        let placeInfo = capital?.subtitle
+        
+        let ac = UIAlertController(title: placeName!, message: placeInfo!, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+    }
+    
+/*
     func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
             let pinAnnotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "myPin")
             
@@ -132,6 +156,8 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
             return pinAnnotationView
     }
+ 
+ */
     
 /*
      func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
