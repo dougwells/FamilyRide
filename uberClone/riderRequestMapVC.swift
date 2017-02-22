@@ -117,28 +117,60 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
             return annotationView
             
         } else {
-            let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier:"")
+            let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier:"pin")
             annotationView.isEnabled = true
             annotationView.canShowCallout = true
+            annotationView.pinColor = .green
             
-            let btn = UIButton(type: .detailDisclosure)
-            annotationView.rightCalloutAccessoryView = btn
+            let acceptButton = UIButton(type: UIButtonType.custom) as UIButton
+            acceptButton.frame.size.width = 30
+            acceptButton.frame.size.height = 30
+            acceptButton.setImage(#imageLiteral(resourceName: "acceptIcon.png"), for: .normal)
+            
+            let rejectButton = UIButton(type: UIButtonType.custom) as UIButton
+            rejectButton.frame.size.width = 30
+            rejectButton.frame.size.height = 30
+            rejectButton.setImage(#imageLiteral(resourceName: "rejectIcon.png"), for: .normal)
+            
+            annotationView.rightCalloutAccessoryView = acceptButton
+            annotationView.leftCalloutAccessoryView = rejectButton
+            
             return annotationView
         }
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        let capital = view.annotation
-        let placeName = capital?.title
-        let placeInfo = capital?.subtitle
         
+        if (control == view.leftCalloutAccessoryView) {
+            self.createAlert(title: "Ride Request Rejected", message: "Press OK to continue")
+        }
+        
+        else if (control == view.rightCalloutAccessoryView) {
+            self.createAlert(title: "Ride Request Accepted", message: "Press OK for directions to pickup location")
+        }
+        
+        
+        
+        /*
         let ac = UIAlertController(title: placeName!, message: placeInfo!, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         present(ac, animated: true)
+        */
     }
     
+    func createAlert(title: String, message: String ) {
+        //creat alert
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        //add button to alert
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        //present alert
+        self.present(alert, animated: true, completion: nil)
+    }  //End createAlert
+    
 /*
-    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+    func mapView(_ mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
             let pinAnnotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "myPin")
             
             pinAnnotationView.pinColor = .purple
