@@ -189,6 +189,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                 riderRequest["location"] = geopoint as? PFGeoPoint
                 riderRequest["username"] = PFUser.current()?.username
                 riderRequest["riderId"] = PFUser.current()?.objectId
+                riderRequest["driverAccepted"] = "Not yet accepted"
                 riderRequest.saveInBackground()
             }
         }

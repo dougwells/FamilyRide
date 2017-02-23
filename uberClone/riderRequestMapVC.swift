@@ -76,6 +76,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
             if let driverGeoPoint = geopoint {
                 let query = PFQuery(className: "RiderRequest")
+                query.whereKey("driverAccepted", equalTo: "Not yet accepted")
                 query.whereKey("location", nearGeoPoint: driverGeoPoint )
                 query.limit = 10
                 
@@ -162,6 +163,19 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 let longitude = view.annotation?.coordinate.longitude
                 
                 self.getDirections(latitude: latitude!, longitude: longitude!, name: ((view.annotation?.title)!)!)
+                
+                let query = PFQuery(className: "RiderRequest")
+                query.whereKey("username", contains: (view.annotation?.title)!)
+                query.findObjectsInBackground(block: { (objects, error) in
+                    if let riderRequests = objects {
+                        
+                        for riderRequest in riderRequests {
+                            riderRequest["driverAccepted"] = PFUser.current()?.username
+                            riderRequest.saveInBackground()
+                            
+                        }
+                    }
+                })
                 
                 print("Accept Ride.  OK pressed.\(view.annotation?.title))")
                 acceptRideAlert.dismiss(animated: true, completion: nil)
@@ -270,10 +284,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         return pinView
     }
      */
-    
-    func getDirections(){
-        print("Hello World")
-    }
+
 
     /*
     // MARK: - Navigation

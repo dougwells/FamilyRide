@@ -16,6 +16,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     
     let locationManager = CLLocationManager()
     var requestUsernames = [String]()
+    var requestUserIds = [String]()
     var requestObjectIds = [String]()
     var requestLocations = [PFGeoPoint]()
     
@@ -67,8 +68,12 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
         //present alert
         self.present(alert, animated: true, completion: nil)
     }  //End createAlert
-
     
+
+    override func viewDidAppear(_ animated: Bool) {
+        updateActiveRideRequestsTable()
+    }
+
     
 
     override func viewDidLoad() {
@@ -138,6 +143,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
         let message = self.requestUsernames[indexPath.row]
         let messageArr = message.components(separatedBy: "|")
         let name = messageArr[0]
+        let objectId = self.requestObjectIds[indexPath.row]
         let geopoint = self.requestLocations[indexPath.row]
         
         let latitude = geopoint.latitude
@@ -151,7 +157,19 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
             
             self.getDirections(latitude: latitude, longitude: longitude, name: name )
             
-            print("Accept Ride.  OK pressed.\(name))")
+            let query = PFQuery(className: "RiderRequest")
+            query.whereKey("objectId", equalTo: objectId)
+            query.findObjectsInBackground(block: { (objects, error) in
+                if let riderRequests = objects {
+                    
+                    for riderRequest in riderRequests {
+                        riderRequest["driverAccepted"] = PFUser.current()?.username
+                        riderRequest.saveInBackground()
+                        
+                    }
+                }
+            })
+            
             acceptRideAlert.dismiss(animated: true, completion: nil)
             
             
@@ -191,10 +209,12 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
             
             if let driverGeoPoint = geopoint {
                 let query = PFQuery(className: "RiderRequest")
+                query.whereKey("driverAccepted", equalTo: "Not yet accepted")
                 query.whereKey("location", nearGeoPoint: driverGeoPoint )
                 query.limit = 10
                 
                 self.requestUsernames.removeAll()
+                self.requestUserIds.removeAll()
                 self.requestObjectIds.removeAll()
                 self.requestLocations.removeAll()
                 
@@ -204,13 +224,12 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                                 for riderRequest in riderRequests {
                             
                                     let requestId = riderRequest.objectId
-                                    let riderId = riderRequest["userId"]
+                                    let riderId = riderRequest["userId"] as? String
                                     let riderLocation = riderRequest["location"] as? PFGeoPoint
                                     let distance = riderLocation!.distanceInMiles(to: driverGeoPoint)
                                     let distanceString = String(format: "%.2f miles", distance)
                                     let riderName = riderRequest["username"]! as! String
                                     let riderNameArr = riderName.components(separatedBy: "-")
-                                    
                                     let riderMessage = "\(riderNameArr[1]) | Distance: \(distanceString)"
                                     self.requestUsernames.append(riderMessage)
                                     self.requestObjectIds.append(requestId! as String)
