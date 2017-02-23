@@ -174,7 +174,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     func getDirections (latitude: CLLocationDegrees, longitude: CLLocationDegrees, name: String) {
-        print("Get directions has begun")
+        
         let requestCLLocation = CLLocation(latitude: latitude, longitude: longitude)
             CLGeocoder().reverseGeocodeLocation(requestCLLocation, completionHandler: { (placemarks, error) in
                 

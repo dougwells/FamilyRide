@@ -8,6 +8,7 @@
 
 import UIKit
 import Parse
+import MapKit
 import Foundation
 
 class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegate {
@@ -16,6 +17,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     let locationManager = CLLocationManager()
     var requestUsernames = [String]()
     var requestObjectIds = [String]()
+    var requestLocations = [PFGeoPoint]()
     
     
     
@@ -131,14 +133,58 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {   //activate Segue to secondView
         print("indexPath = ", indexPath.row)
-        performSegue(withIdentifier: "tableToDirections", sender: nil)
+        //performSegue(withIdentifier: "tableToDirections", sender: nil)
+        
+        let message = self.requestUsernames[indexPath.row]
+        let messageArr = message.components(separatedBy: "|")
+        let name = messageArr[0]
+        let geopoint = self.requestLocations[indexPath.row]
+        
+        let latitude = geopoint.latitude
+        let longitude = geopoint.longitude
+        
+        let acceptRideAlert = UIAlertController(title: "Accept ride request from \(name)?", message: "Press OK to accept & to obtain directions to pickup location", preferredStyle: UIAlertControllerStyle.alert)
+        
+        acceptRideAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        
+        acceptRideAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action) in
+            
+            self.getDirections(latitude: latitude, longitude: longitude, name: name )
+            
+            print("Accept Ride.  OK pressed.\(name))")
+            acceptRideAlert.dismiss(animated: true, completion: nil)
+            
+            
+        }))
+        
+        present(acceptRideAlert, animated: true, completion: nil)
+    }
+
+    func getDirections (latitude: CLLocationDegrees, longitude: CLLocationDegrees, name: String) {
+        
+        let requestCLLocation = CLLocation(latitude: latitude, longitude: longitude)
+        CLGeocoder().reverseGeocodeLocation(requestCLLocation, completionHandler: { (placemarks, error) in
+            
+            if let placemarks = placemarks {
+                if placemarks.count > 0 {
+                    let mKPlacemark = MKPlacemark(placemark: placemarks[0])
+                    let mapItem = MKMapItem(placemark: mKPlacemark)
+                    
+                    mapItem.name = name
+                    let launchOptions = [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving]
+                    
+                    mapItem.openInMaps(launchOptions: launchOptions)
+                    
+                }
+            }
+        })
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     func updateActiveRideRequestsTable() {
         
         PFGeoPoint.geoPointForCurrentLocation { (geopoint, error) in
@@ -150,6 +196,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                 
                 self.requestUsernames.removeAll()
                 self.requestObjectIds.removeAll()
+                self.requestLocations.removeAll()
                 
                 query.findObjectsInBackground(block: { (objects, error) in
                         if let riderRequests = objects {
@@ -167,6 +214,7 @@ class ActiveRideRequestsTableVC: UITableViewController, CLLocationManagerDelegat
                                     let riderMessage = "\(riderNameArr[1]) | Distance: \(distanceString)"
                                     self.requestUsernames.append(riderMessage)
                                     self.requestObjectIds.append(requestId! as String)
+                                    self.requestLocations.append(riderLocation!)
                                     //print("Username", riderName)
                                 }
                             }
