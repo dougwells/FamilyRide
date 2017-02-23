@@ -120,7 +120,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
             let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier:"pin")
             annotationView.isEnabled = true
             annotationView.canShowCallout = true
-            annotationView.pinColor = .green
+            annotationView.pinColor = .purple
             
             let acceptButton = UIButton(type: UIButtonType.custom) as UIButton
             acceptButton.frame.size.width = 30
@@ -141,12 +141,38 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         
+        
         if (control == view.leftCalloutAccessoryView) {
-            self.createAlert(title: "Ride Request Rejected", message: "Press OK to continue")
+            
+            let rejectRideAlert = UIAlertController(title: "Ride request rejected", message: "Press OK to continue", preferredStyle: UIAlertControllerStyle.alert)
+            
+            rejectRideAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+            present(rejectRideAlert, animated: true, completion: nil)
         }
         
         else if (control == view.rightCalloutAccessoryView) {
-            self.createAlert(title: "Ride Request Accepted", message: "Press OK for directions to pickup location")
+            let acceptRideAlert = UIAlertController(title: "Ride request accepted", message: "Press OK to confirm & to obtain directions to pickup location", preferredStyle: UIAlertControllerStyle.alert)
+            
+            acceptRideAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+            
+            acceptRideAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action) in
+                
+                /*
+                    if let requestCLLocation = view.annotation?.coordinate {
+                    CLGeocoder().reverseGeocodeLocation(requestCLLocation, completionHandler: { (placemarks, error) in
+                        
+                    })
+                }
+                */
+                
+                print("Accept Ride.  OK pressed.\(view.annotation?.coordinate))")
+                acceptRideAlert.dismiss(animated: true, completion: nil)
+                
+            
+            }))
+            
+            present(acceptRideAlert, animated: true, completion: nil)
         }
         
         
@@ -163,7 +189,12 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
         
         //add button to alert
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default , handler: { (action) in
+            
+            print("OK Pressed")
+        }))
         
         //present alert
         self.present(alert, animated: true, completion: nil)
