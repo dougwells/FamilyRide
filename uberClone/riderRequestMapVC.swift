@@ -158,15 +158,12 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
             acceptRideAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action) in
                 
-                /*
-                    if let requestCLLocation = view.annotation?.coordinate {
-                    CLGeocoder().reverseGeocodeLocation(requestCLLocation, completionHandler: { (placemarks, error) in
-                        
-                    })
-                }
-                */
+                let latitude = view.annotation?.coordinate.latitude
+                let longitude = view.annotation?.coordinate.longitude
                 
-                print("Accept Ride.  OK pressed.\(view.annotation?.coordinate))")
+                self.getDirections(latitude: latitude!, longitude: longitude!, name: ((view.annotation?.title)!)!)
+                
+                print("Accept Ride.  OK pressed.\(view.annotation?.title))")
                 acceptRideAlert.dismiss(animated: true, completion: nil)
                 
             
@@ -174,14 +171,26 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
             present(acceptRideAlert, animated: true, completion: nil)
         }
-        
-        
-        
-        /*
-        let ac = UIAlertController(title: placeName!, message: placeInfo!, preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "OK", style: .default))
-        present(ac, animated: true)
-        */
+    }
+    
+    func getDirections (latitude: CLLocationDegrees, longitude: CLLocationDegrees, name: String) {
+        print("Get directions has begun")
+        let requestCLLocation = CLLocation(latitude: latitude, longitude: longitude)
+            CLGeocoder().reverseGeocodeLocation(requestCLLocation, completionHandler: { (placemarks, error) in
+                
+                if let placemarks = placemarks {
+                    if placemarks.count > 0 {
+                        let mKPlacemark = MKPlacemark(placemark: placemarks[0])
+                        let mapItem = MKMapItem(placemark: mKPlacemark)
+                        
+                        mapItem.name = name
+                        let launchOptions = [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving]
+                        
+                        mapItem.openInMaps(launchOptions: launchOptions)
+                        
+                    }
+                }
+            })
     }
     
     func createAlert(title: String, message: String ) {
