@@ -147,8 +147,8 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
             longitude = riderLocation.longitude
         }
 
-        let latDelta: CLLocationDegrees = 0.01
-        let lonDelta: CLLocationDegrees = 0.01
+        let latDelta: CLLocationDegrees = 0.05
+        let lonDelta: CLLocationDegrees = 0.05
         
         //Sets "zoom" level
         let span: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
@@ -160,7 +160,10 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         let region: MKCoordinateRegion = MKCoordinateRegion(center: location, span: span)
         
         //Finally, time to tell iOS where in map to set initial location and zoom level
-        self.map.setRegion(region, animated: true)
+        
+        if self.riderPickupAlertShared == false {
+            self.map.setRegion(region, animated: true)
+        }
         
         
     }
@@ -295,7 +298,6 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     } //end updateUberPickupLocation
     
     func hasDriverAcceptedMyRide () {
-        print("has driver accepted my ride?")
         let query = PFQuery(className: "RiderRequest")
         query.whereKey("username", equalTo: PFUser.current()?.username)
         query.findObjectsInBackground { (objects, error) in
@@ -307,6 +309,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                         let riderName = (rideRequest["username"] as! String).components(separatedBy: "-")[1]
                         let driverName = (rideRequest["driverAccepted"] as! String).components(separatedBy: "-")[1]
                         let riderLocation = rideRequest["location"] as? PFGeoPoint
+                        let riderCLLocation = CLLocationCoordinate2D(latitude: (riderLocation?.latitude)!, longitude: (riderLocation?.longitude)!)
                         
                         let driverQuery = PFQuery(className: "DriverLocation")
                         driverQuery.whereKey("username", contains: driverName)
@@ -315,8 +318,17 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                                 for driver in drivers {
                                     
                                     let driverLocation = driver["location"] as? PFGeoPoint
+                                    
                                     let distance = riderLocation?.distanceInMiles(to: driverLocation)
                                     let roundedDistance = round(distance! * 100) / 100
+                                    
+                                    let latDelta = abs((riderLocation?.latitude)! - (driverLocation?.latitude)!) * 2.5
+                                    
+                                    let lonDelta = abs((riderLocation?.longitude)! - (driverLocation?.longitude)!) * 2.5
+                                    
+                                    let region = MKCoordinateRegion(center: riderCLLocation, span: MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta))
+                                    
+                                    self.map.setRegion(region, animated: true)
                                     
                                     if !self.riderPickupAlertShared {
                                         

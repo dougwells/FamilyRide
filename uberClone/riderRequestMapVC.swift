@@ -57,8 +57,8 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
         }
         
-        let latDelta: CLLocationDegrees = 0.10
-        let lonDelta: CLLocationDegrees = 0.10
+        let latDelta: CLLocationDegrees = 0.25
+        let lonDelta: CLLocationDegrees = 0.25
         
         //Sets "zoom" level
         let span: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
@@ -70,7 +70,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let region: MKCoordinateRegion = MKCoordinateRegion(center: location, span: span)
         
         //Finally, time to tell iOS where in map to set initial location and zoom level
-        self.map.setRegion(region, animated: true)
+        self.map.setRegion(region, animated: false)
         
         
     }
