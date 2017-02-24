@@ -30,7 +30,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-
+        timer.invalidate()
     }
 
 
@@ -50,10 +50,11 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //set lat, lon and deltas
         
-        if let riderLocation = manager.location?.coordinate {
-            latitude = riderLocation.latitude
-            longitude = riderLocation.longitude
+        if let driverLocation = manager.location?.coordinate {
+            latitude = driverLocation.latitude
+            longitude = driverLocation.longitude
             //print("user location =", latitude, longitude)
+
         }
         
         let latDelta: CLLocationDegrees = 0.10
@@ -89,6 +90,20 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         PFGeoPoint.geoPointForCurrentLocation { (geopoint, error) in
             
             if let driverGeoPoint = geopoint {
+                
+                let driverQuery = PFQuery(className: "RiderRequest")
+                driverQuery.whereKey("driverAccepted", contains: PFUser.current()?.username)
+                driverQuery.findObjectsInBackground(block: { (objects, error) in
+                    if let riderRequests = objects {
+                        for riderRequest in riderRequests {
+                            riderRequest["driverLocation"] = driverGeoPoint
+                            riderRequest.saveInBackground()
+                        }
+                    }
+                })
+                
+                
+                
                 let query = PFQuery(className: "RiderRequest")
                 query.whereKey("driverAccepted", equalTo: "Not yet accepted")
                 query.whereKey("location", nearGeoPoint: driverGeoPoint )
@@ -245,7 +260,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         alert.addAction(UIAlertAction(title: "OK", style: .default , handler: { (action) in
             
-            print("OK Pressed")
+        //print("OK Pressed")
         }))
         
         //present alert
