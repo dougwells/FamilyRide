@@ -26,7 +26,7 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
     override func viewDidAppear(_ animated: Bool) {
         self.map.removeAnnotations(self.map.annotations)
         self.updateRideRequestsMap()
-        timer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(self.updateRideRequestsMap), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.updateRideRequestsMap), userInfo: nil, repeats: true)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -91,14 +91,25 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
             if let driverGeoPoint = geopoint {
                 
-                let driverQuery = PFQuery(className: "RiderRequest")
-                driverQuery.whereKey("driverAccepted", contains: PFUser.current()?.username)
+                print("== Driver username: \(PFUser.current()?.username) ==")
+                let driverQuery = PFQuery(className: "DriverLocation")
+                driverQuery.whereKey("username", equalTo: (PFUser.current()?.username!)! as String)
                 driverQuery.findObjectsInBackground(block: { (objects, error) in
-                    if let riderRequests = objects {
-                        for riderRequest in riderRequests {
-                            riderRequest["driverLocation"] = driverGeoPoint
-                            riderRequest.saveInBackground()
+                    if let driverLocations = objects {
+                        
+                        if driverLocations.count > 0 {
+                            for driverLocation in driverLocations {
+                                driverLocation.deleteInBackground()
+                                print("old driver locations deleted")
+                            }
                         }
+                        
+                        let driverLocation = PFObject(className: "DriverLocation")
+                        driverLocation["username"] = PFUser.current()?.username
+                        driverLocation["location"] = driverGeoPoint
+                        driverLocation.saveInBackground()
+                        print ("driver location saved")
+                            
                     }
                 })
                 
