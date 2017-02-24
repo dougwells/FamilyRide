@@ -18,6 +18,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     var latitude: CLLocationDegrees = 0.0
     var longitude: CLLocationDegrees = 0.0
     let annotation = MKPointAnnotation()
+    var timer = Timer()
     @IBOutlet weak var map: MKMapView!
     @IBOutlet weak var callAnUberButton: UIButton!
     
@@ -31,6 +32,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         if !existingUberRequest {
             
             self.makeNewUberRequest()
+
             
         } else {
             
@@ -45,6 +47,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         print("Logging out \(PFUser.current()?.username).")
         
         self.locationManager.stopUpdatingLocation()
+        timer.invalidate()
         
         existingUberRequest = false
         
@@ -91,7 +94,6 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.callAnUberButton.isHidden = true
         
         locationManager.delegate = self  //sets delegate to VC so VC can control it
@@ -112,6 +114,13 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
             if objects?.count != 0 {
                 self.existingUberRequest = true
                 self.callAnUberButton.setTitle("Cancel Uber", for: [])
+                self.timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.hasDriverAcceptedMyRide), userInfo: nil, repeats: true)
+                if let rideRequests = objects {
+                    for rideRequest in rideRequests {
+                        let riderLocation = rideRequest["location"] as! PFGeoPoint
+                        self.showAnnotation(latitude: riderLocation.latitude, longitude: riderLocation.longitude)
+                    }
+                }
             }
             self.callAnUberButton.isHidden = false
         })
@@ -129,7 +138,6 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         if let riderLocation = manager.location?.coordinate {
             latitude = riderLocation.latitude
             longitude = riderLocation.longitude
-            print("user location =", latitude, longitude)
         }
 
         let latDelta: CLLocationDegrees = 0.01
@@ -161,7 +169,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         self.present(alert, animated: true, completion: nil)
     }  //End createAlert
     
-    func showAnnotation() {
+    func showAnnotation(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
         if map.annotations.count != 0 {
             map.removeAnnotations(map.annotations)
         }
@@ -174,6 +182,8 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     func makeNewUberRequest() {
         existingUberRequest = true
         callAnUberButton.setTitle("Cancel Uber", for: [])
+        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.hasDriverAcceptedMyRide), userInfo: nil, repeats: true)
+
         
         /*  Could also have made a PFGeopoint
             riderRequest["location"] = PFGeopoint(latitude: latitude, longitude: longitude)
@@ -183,8 +193,11 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
             self.createAlert(title: "Uber", message: "Your pickup request has been made.")
             print("Uber requested. PFGeopoint =", geopoint)
             if let geopoint = geopoint {
+                self.latitude = geopoint.latitude
+                self.longitude = geopoint.longitude
+
                 
-                self.showAnnotation()
+                self.showAnnotation(latitude: self.latitude, longitude: self.longitude)
                 let riderRequest = PFObject(className: "RiderRequest")
                 riderRequest["location"] = geopoint as? PFGeoPoint
                 riderRequest["username"] = PFUser.current()?.username
@@ -202,6 +215,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     
     func cancelExistingUberRequest() {
         existingUberRequest = false
+        timer.invalidate()
         
         if map.annotations.count != 0 {
             map.removeAnnotations(map.annotations)
@@ -239,13 +253,15 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                         if  requests.count == 0 {
                             self.createAlert(title: "Unable to update pickup location.", message: "You do not have an existing Uber pickup request.  Please call an Uber.")
                             print("Update Pickup error:", error)
+                            
                         } else {
                             for object in requests {
                                 if let request = object as? PFObject {
                                     request["location"] = geopoint as? PFGeoPoint
-                                    self.showAnnotation()
+                                    self.showAnnotation(latitude: geopoint.latitude, longitude: geopoint.longitude)
                                     print("Pickup location updated")
                                     request.saveInBackground()
+                                    self.timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.hasDriverAcceptedMyRide), userInfo: nil, repeats: true)
                                 }
                             }
                         }
@@ -255,6 +271,10 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
             }
         }
     } //end updateUberPickupLocation
+    
+    func hasDriverAcceptedMyRide () {
+        print("has driver accepted my ride?")
+    }
     
 
     /*
