@@ -16,11 +16,23 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     @IBOutlet weak var map: MKMapView!
     var locationManager = CLLocationManager()
+    var timer = Timer()
     var requestUsernames = [String]()
     var requestObjectIds = [String]()
     var requestPFGeopoints = [PFGeoPoint]()
     var latitude: CLLocationDegrees = 0.0
     var longitude: CLLocationDegrees = 0.0
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.map.removeAnnotations(self.map.annotations)
+        self.updateRideRequestsMap()
+        timer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(self.updateRideRequestsMap), userInfo: nil, repeats: true)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+
+    }
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,6 +83,8 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     func updateRideRequestsMap() {
+        
+        
         
         PFGeoPoint.geoPointForCurrentLocation { (geopoint, error) in
             
@@ -161,8 +175,9 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 
                 let latitude = view.annotation?.coordinate.latitude
                 let longitude = view.annotation?.coordinate.longitude
+                self.updateRideRequestsMap()
                 
-                self.getDirections(latitude: latitude!, longitude: longitude!, name: ((view.annotation?.title)!)!)
+
                 
                 let query = PFQuery(className: "RiderRequest")
                 query.whereKey("username", contains: (view.annotation?.title)!)
@@ -170,9 +185,23 @@ class riderRequestMapVC: UIViewController, MKMapViewDelegate, CLLocationManagerD
                     if let riderRequests = objects {
                         
                         for riderRequest in riderRequests {
-                            riderRequest["driverAccepted"] = PFUser.current()?.username
-                            riderRequest.saveInBackground()
-                            
+                            if riderRequest["driverAccepted"] as! String == "Not yet accepted" {
+                                
+                                riderRequest["driverAccepted"] = PFUser.current()?.username
+                                riderRequest.saveInBackground()
+                                self.getDirections(latitude: latitude!, longitude: longitude!, name: ((view.annotation?.title)!)!)
+                                
+                            } else {
+                                
+                                let missedItAlert = UIAlertController(title: "Sorry, another driver has already selected this rider.", message: "Please select another rider", preferredStyle: UIAlertControllerStyle.alert)
+                                
+                                missedItAlert.addAction(UIAlertAction(title: "Bummer", style: .default, handler: nil))
+                                
+                                self.present(missedItAlert, animated: true, completion: nil)
+                                self.map.removeAnnotations(self.map.annotations)
+                                self.updateRideRequestsMap()
+
+                            }
                         }
                     }
                 })
