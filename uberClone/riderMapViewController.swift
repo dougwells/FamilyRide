@@ -15,6 +15,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     
     var locationManager = CLLocationManager()
     var existingUberRequest = false
+    var riderPickupAlertShared = false
     var latitude: CLLocationDegrees = 0.0
     var longitude: CLLocationDegrees = 0.0
     let annotation = MKPointAnnotation()
@@ -50,6 +51,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         timer.invalidate()
         
         existingUberRequest = false
+        riderPickupAlertShared = false
         
         if map.annotations.count != 0 {
             map.removeAnnotations(map.annotations)
@@ -115,12 +117,17 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                 self.existingUberRequest = true
                 self.callAnUberButton.setTitle("Cancel Uber", for: [])
                 self.timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.hasDriverAcceptedMyRide), userInfo: nil, repeats: true)
+                
                 if let rideRequests = objects {
                     for rideRequest in rideRequests {
+                 
                         let riderLocation = rideRequest["location"] as! PFGeoPoint
-                        self.showAnnotation(latitude: riderLocation.latitude, longitude: riderLocation.longitude)
+                        
+                        self.createAnnotation(title: "Pickup Location", subTitle: "", point: riderLocation)
+                        
                     }
                 }
+                
             }
             self.callAnUberButton.isHidden = false
         })
@@ -169,10 +176,15 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
         self.present(alert, animated: true, completion: nil)
     }  //End createAlert
     
+    func createAnnotation (title: String, subTitle: String, point: PFGeoPoint) {
+        let annotation = MKPointAnnotation()
+        annotation.title = title
+        annotation.subtitle = subTitle
+        annotation.coordinate = CLLocationCoordinate2DMake(point.latitude, point.longitude)
+        map.addAnnotation(annotation)
+    }
+    
     func showAnnotation(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
-        if map.annotations.count != 0 {
-            map.removeAnnotations(map.annotations)
-        }
         annotation.coordinate.latitude = latitude
         annotation.coordinate.longitude = longitude
         annotation.title = "Pickup location"
@@ -181,6 +193,7 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     
     func makeNewUberRequest() {
         existingUberRequest = true
+        riderPickupAlertShared = false
         callAnUberButton.setTitle("Cancel Uber", for: [])
         timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.hasDriverAcceptedMyRide), userInfo: nil, repeats: true)
 
@@ -195,9 +208,12 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
             if let geopoint = geopoint {
                 self.latitude = geopoint.latitude
                 self.longitude = geopoint.longitude
-
                 
-                self.showAnnotation(latitude: self.latitude, longitude: self.longitude)
+                if self.map.annotations.count != 0 {
+                    self.map.removeAnnotations(self.map.annotations)
+                }
+                self.createAnnotation(title: "Pickup Location", subTitle: "", point: geopoint)
+                
                 let riderRequest = PFObject(className: "RiderRequest")
                 riderRequest["location"] = geopoint as? PFGeoPoint
                 riderRequest["username"] = PFUser.current()?.username
@@ -258,9 +274,15 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
                             for object in requests {
                                 if let request = object as? PFObject {
                                     request["location"] = geopoint as? PFGeoPoint
-                                    self.showAnnotation(latitude: geopoint.latitude, longitude: geopoint.longitude)
+                                    
+                                    if self.map.annotations.count != 0 {
+                                        self.map.removeAnnotations(self.map.annotations)
+                                    }
+                                    self.createAnnotation(title: "Updated Pickup Location", subTitle: "", point: geopoint)
+                                    
                                     print("Pickup location updated")
                                     request.saveInBackground()
+                                    self.riderPickupAlertShared = false
                                     self.timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.hasDriverAcceptedMyRide), userInfo: nil, repeats: true)
                                 }
                             }
@@ -274,6 +296,51 @@ class riderMapViewController: UIViewController, MKMapViewDelegate, CLLocationMan
     
     func hasDriverAcceptedMyRide () {
         print("has driver accepted my ride?")
+        let query = PFQuery(className: "RiderRequest")
+        query.whereKey("username", equalTo: PFUser.current()?.username)
+        query.findObjectsInBackground { (objects, error) in
+            if let rideRequests = objects {
+                for rideRequest in rideRequests {
+                    
+                    if rideRequest["driverAccepted"] as! String != "Not yet accepted" {
+                        
+                        let riderName = (rideRequest["username"] as! String).components(separatedBy: "-")[1]
+                        let driverName = (rideRequest["driverAccepted"] as! String).components(separatedBy: "-")[1]
+                        let riderLocation = rideRequest["location"] as? PFGeoPoint
+                        
+                        let driverQuery = PFQuery(className: "DriverLocation")
+                        driverQuery.whereKey("username", contains: driverName)
+                        driverQuery.findObjectsInBackground(block: { (objects, error) in
+                            if let drivers = objects {
+                                for driver in drivers {
+                                    
+                                    let driverLocation = driver["location"] as? PFGeoPoint
+                                    let distance = riderLocation?.distanceInMiles(to: driverLocation)
+                                    let roundedDistance = round(distance! * 100) / 100
+                                    
+                                    if !self.riderPickupAlertShared {
+                                        
+                                        self.createAlert(title: "Driver is on his way!", message: "\(driverName) is \(roundedDistance) miles away")
+                                        self.riderPickupAlertShared = true
+                                        
+                                    }
+                                    
+                                    if self.map.annotations.count != 0 {
+                                        self.map.removeAnnotations(self.map.annotations)
+                                    }
+                                    
+                                    self.createAnnotation(title: "Rider: \(riderName)", subTitle: "Pickup Location", point: riderLocation!)
+                                    self.createAnnotation(title: "Driver: \(driverName)", subTitle: "\(roundedDistance) miles away.", point: driverLocation!)
+                                    
+                                }
+                            }
+                        })
+                        
+                        
+                    }
+                }
+            }
+        }
     }
     
 
