@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7020D1BE1E64D3EF008AB169 /* ActiveRideRequestMap.png in Resources */ = {isa = PBXBuildFile; fileRef = 7020D1B71E64D3EF008AB169 /* ActiveRideRequestMap.png */; };
+		7020D1BF1E64D3EF008AB169 /* ActiveRideRequestTable.png in Resources */ = {isa = PBXBuildFile; fileRef = 7020D1B81E64D3EF008AB169 /* ActiveRideRequestTable.png */; };
+		7020D1C01E64D3EF008AB169 /* DirectionsToPickup.png in Resources */ = {isa = PBXBuildFile; fileRef = 7020D1B91E64D3EF008AB169 /* DirectionsToPickup.png */; };
+		7020D1C11E64D3EF008AB169 /* DirectionsTurnbyTurn.png in Resources */ = {isa = PBXBuildFile; fileRef = 7020D1BA1E64D3EF008AB169 /* DirectionsTurnbyTurn.png */; };
+		7020D1C21E64D3EF008AB169 /* LaunchScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 7020D1BB1E64D3EF008AB169 /* LaunchScreen.png */; };
+		7020D1C31E64D3EF008AB169 /* RequestARide.png in Resources */ = {isa = PBXBuildFile; fileRef = 7020D1BC1E64D3EF008AB169 /* RequestARide.png */; };
 		70577E591E4E4F0700987E41 /* riderMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70577E581E4E4F0700987E41 /* riderMapViewController.swift */; };
 		70577E5B1E4F80E500987E41 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70577E5A1E4F80E500987E41 /* CoreLocation.framework */; };
 		70577E5F1E5236C900987E41 /* ActiveRideRequestsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70577E5E1E5236C900987E41 /* ActiveRideRequestsTableVC.swift */; };
@@ -31,6 +37,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7020D1B71E64D3EF008AB169 /* ActiveRideRequestMap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ActiveRideRequestMap.png; sourceTree = "<group>"; };
+		7020D1B81E64D3EF008AB169 /* ActiveRideRequestTable.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ActiveRideRequestTable.png; sourceTree = "<group>"; };
+		7020D1B91E64D3EF008AB169 /* DirectionsToPickup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DirectionsToPickup.png; sourceTree = "<group>"; };
+		7020D1BA1E64D3EF008AB169 /* DirectionsTurnbyTurn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DirectionsTurnbyTurn.png; sourceTree = "<group>"; };
+		7020D1BB1E64D3EF008AB169 /* LaunchScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchScreen.png; sourceTree = "<group>"; };
+		7020D1BC1E64D3EF008AB169 /* RequestARide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RequestARide.png; sourceTree = "<group>"; };
 		70577E581E4E4F0700987E41 /* riderMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = riderMapViewController.swift; sourceTree = "<group>"; };
 		70577E5A1E4F80E500987E41 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		70577E5E1E5236C900987E41 /* ActiveRideRequestsTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ActiveRideRequestsTableVC.swift; path = ../ActiveRideRequestsTableVC.swift; sourceTree = "<group>"; };
@@ -77,6 +89,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7020D1C51E64D410008AB169 /* ScreenShots */ = {
+			isa = PBXGroup;
+			children = (
+				7020D1B71E64D3EF008AB169 /* ActiveRideRequestMap.png */,
+				7020D1B81E64D3EF008AB169 /* ActiveRideRequestTable.png */,
+				7020D1B91E64D3EF008AB169 /* DirectionsToPickup.png */,
+				7020D1BA1E64D3EF008AB169 /* DirectionsTurnbyTurn.png */,
+				7020D1BB1E64D3EF008AB169 /* LaunchScreen.png */,
+				7020D1BC1E64D3EF008AB169 /* RequestARide.png */,
+			);
+			name = ScreenShots;
+			sourceTree = "<group>";
+		};
 		814C3AC51B69877600E307BB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +125,7 @@
 				814C3AC51B69877600E307BB /* Resources */,
 				81BA816A1A49DB5600E65899 /* Frameworks */,
 				81BA81461A49DA1800E65899 /* Products */,
+				7020D1C51E64D410008AB169 /* ScreenShots */,
 			);
 			sourceTree = "<group>";
 		};
@@ -214,13 +240,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7020D1BF1E64D3EF008AB169 /* ActiveRideRequestTable.png in Resources */,
 				70AB95B51E4B6C260070C513 /* cityCar.png in Resources */,
 				814C3ACA1B69877600E307BB /* Main.storyboard in Resources */,
+				7020D1BE1E64D3EF008AB169 /* ActiveRideRequestMap.png in Resources */,
+				7020D1C21E64D3EF008AB169 /* LaunchScreen.png in Resources */,
 				814C3ACB1B69877600E307BB /* Images.xcassets in Resources */,
 				707631AD1E5E168E00AD76ED /* directionIcon.jpg in Resources */,
 				707631B11E5E1A1B00AD76ED /* acceptIcon.png in Resources */,
 				8136E54C1CB4D7DD0011D421 /* Launch.storyboard in Resources */,
+				7020D1C31E64D3EF008AB169 /* RequestARide.png in Resources */,
+				7020D1C01E64D3EF008AB169 /* DirectionsToPickup.png in Resources */,
 				70AB95B71E4B6C320070C513 /* colorfulCars.jpg in Resources */,
+				7020D1C11E64D3EF008AB169 /* DirectionsTurnbyTurn.png in Resources */,
 				70AB95B31E4B6C160070C513 /* chauffer.jpg in Resources */,
 				707631AF1E5E1A0700AD76ED /* rejectIcon.png in Resources */,
 			);
@@ -355,9 +387,9 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.parse.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pcLabs.uberClone;
 				PRODUCT_NAME = uberClone;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -376,9 +408,9 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.parse.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pcLabs.uberClone;
 				PRODUCT_NAME = uberClone;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
