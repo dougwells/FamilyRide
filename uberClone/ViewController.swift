@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2015-present, Parse, LLC.
+* Copyright (c) 2017-present, Doug Wells
 * All rights reserved.
 *
 * This source code is licensed under the BSD-style license found in the
