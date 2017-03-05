@@ -14,8 +14,8 @@ Now you can use an uber-like interface to request rides from family members. Rid
 
 ## Stack
 - Swift 3 / Xcode 8.2.1
-- Parse Server by Bitnami
-- Amazon EC2 Instance
+- Parse Server by Bitnami on AWS EC2 Instance (Early commits)
+- Parse Server by Back4App.com (later commits)
 
 ## Screen Shots:
 Launch Screen              |  Map of Active Ride Requests |  
